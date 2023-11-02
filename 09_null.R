@@ -1,4 +1,4 @@
-load("/home/bd/Dropbox/projects/measurement_rcts/bdwd/df.Rdata")
+load("~/Dropbox/projects/measurement_rcts/bdwd/df.Rdata")
 df$del<-df$difmgt-df$difmgc
 
 f<-function(df) { #just the ratios
@@ -15,7 +15,7 @@ summary(z0$r)
 z0[grep("^SIL",z0$fn),]
 
 
-pdf("/home/bd/Dropbox/Apps/Overleaf/DIF Education RCTs/box.pdf",width=7,height=3.3)
+pdf("~/Dropbox/Apps/Overleaf/DIF Education RCTs/box.pdf",width=7,height=3.3)
 layout(matrix(c(1,2,2,2),nrow=1))
 par(mgp=c(2,1,0),mar=c(3,4,1,1),oma=rep(.5,4))
 hist(z0$r,xlab="R",ylab="",main='')

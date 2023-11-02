@@ -31,7 +31,7 @@ cols<-col2rgb(cols)
 col<-numeric()
 for (i in 1:ncol(cols)) col[i]<-rgb(cols[1,i],cols[2,i],cols[3,i],alpha=160,max=255)
 
-pdf("/home/bd/Dropbox/Apps/Overleaf/DIF Education RCTs/loo.pdf",width=4,height=3.3)
+pdf("~/Dropbox/Apps/Overleaf/DIF Education RCTs/loo.pdf",width=4,height=3.3)
 par(mgp=c(2,1,0),mar=c(3,3,1,1))
 #plot(df$est.loo,df$del)
 #cor(df$del,df$est.loo)

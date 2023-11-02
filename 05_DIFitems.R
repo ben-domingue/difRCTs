@@ -1,4 +1,4 @@
-load("/home/bd/Dropbox/projects/measurement_rcts/bdwd/df.Rdata")
+load("~/Dropbox/projects/measurement_rcts/bdwd/df.Rdata")
 
 del<-df$difmgt-df$difmgc
 cor(del,df$lpm)
@@ -12,7 +12,7 @@ tab2$disc<-cor(df$disc,del,method='spearman')
 
 
 f<-function(fn) {
-    load(paste0('/home/bd/Dropbox/projects/measurement_rcts/02_itemresponse_data/',fn))
+    load(paste0('~/Dropbox/projects/measurement_rcts/02_itemresponse_data/',fn))
     for (i in 1:length(y)) assign(names(y)[i],y[[i]])
     r2<-resp[treat==0,]
     cm<-colMeans(r2)
@@ -21,7 +21,7 @@ f<-function(fn) {
     for (i in 1:ncol(resp)) corr[i]<-cor(rm,r2[,i],use='p')
     data.frame(fn=fn,item=1:ncol(resp),difficulty.c=cm,discrimination.c=corr)
     } 
-lf<-list.files(path='/home/bd/Dropbox/projects/measurement_rcts/02_itemresponse_data')
+lf<-list.files(path='~/Dropbox/projects/measurement_rcts/02_itemresponse_data')
 x<-lapply(lf,f)
 x<-data.frame(do.call("rbind",x))
 

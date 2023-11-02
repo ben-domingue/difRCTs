@@ -53,7 +53,7 @@ JPALfilenames <- c(#"2_math",  "2_literacy",
     "161_finedu_2to6_math",  "161_finedu_7to8_math",  "161_finedu_2to6_literacy",  "161_finedu_7to8_literacy")
 filenames<-c(JPALfilenames,Chinafilenames)
 
-wd<-'/home/bd/Dropbox/projects/measurement_rcts/01_processed_data'
+wd<-'~/Dropbox/projects/measurement_rcts/01_processed_data'
 setwd(wd)
 output<-list()
 for (fn in filenames) {
@@ -62,7 +62,7 @@ for (fn in filenames) {
     for (ii in 1:length(z)) {
         y<-z[[ii]]
         y$info$group<-group
-        fn.out<-paste('/home/bd/Dropbox/projects/measurement_rcts/02_itemresponse_data/',fn,'__',ii,'.Rdata',sep='')
+        fn.out<-paste('~/Dropbox/projects/measurement_rcts/02_itemresponse_data/',fn,'__',ii,'.Rdata',sep='')
         save(y,file=fn.out)
     }
 }
@@ -86,7 +86,7 @@ f<-function(fn) {
     rm<-rowMeans(resp,na.rm=TRUE)
     corr<-numeric()
     for (i in 1:ncol(resp)) corr[i]<-cor(rm,resp[,i],use='p')
-    tr$disc<-corr #item discrim? not sure
+    tr$disc<-corr 
     ##
     ##
     rs<-rowMeans(resp,na.rm=TRUE)
@@ -102,23 +102,37 @@ f<-function(fn) {
     return(df)
 }
 
-setwd('/home/bd/Dropbox/projects/measurement_rcts/02_itemresponse_data/')
+setwd('~/Dropbox/projects/measurement_rcts/02_itemresponse_data/')
 lf<-list.files()
 df<-lapply(lf,f)
 df<-data.frame(do.call("rbind",df))
 
 
 ff<-function(fn) {
+    print(fn)
     load(fn)
     for (i in 1:length(y)) assign(names(y)[i],y[[i]])
     library(mirt)
-    models <- paste('F1 = 1-',ncol(resp),"\nCONSTRAIN=(1-",ncol(resp),",a1)","\nCONSTRAINB=(1-",ncol(resp),",a1)",sep='')
-    models<-mirt.model(models)
     resp<-data.frame(resp)
     group<-paste("D",treat,sep='')
-    mod<-multipleGroup(resp,model=models,group=group
-                       ,SE=TRUE
-                       #invariance=c('slopes', 'intercepts', 'free_var','free_means')
+    ## models <- paste('F1 = 1-',ncol(resp),"\nCONSTRAIN=(1-",ncol(resp),",a1)","\nCONSTRAINB=(1-",ncol(resp),",a1)",sep='')
+    ## models<-mirt.model(models)
+    ## mod<-multipleGroup(resp,model=models,group=group
+    ##                    ,SE=TRUE
+    ##                    #invariance=c('slopes', 'intercepts', 'free_var','free_means')
+    ##                    )
+    ## models <- paste('F1 = 1-',ncol(resp),"\nFIXED=(1-",ncol(resp),",a1)","\nSTART=(1-",ncol(resp),",a1,1.0)","\nCONSTRAIN=(1-",ncol(resp),",a1)","\nCONSTRAINB=(1-",ncol(resp),",a1)",sep='')
+    ## models<-mirt.model(models)
+    ## mod<-multipleGroup(resp,model=models,group=group
+    ##                   ,SE=TRUE,invariance=c('free_var')
+    ##                )
+    models <- paste('F1 = 1-',ncol(resp),"\nCONSTRAIN=(1-",ncol(resp),",a1)","\nCONSTRAINB=(1-",ncol(resp),",a1)",sep='')
+    models<-mirt.model(models)
+    mod<-multipleGroup(resp,
+                       model=models,
+                       group=group,
+                       SE=TRUE,
+                       invariance=c('free_var')
                        )
     f<-function(x) {
         x<-x[-length(x)]
@@ -130,10 +144,18 @@ ff<-function(fn) {
     test<-grepl("SE",rownames(z))
     se<-z[test,]
     z<-z[!test,]
-    data.frame(fn=fn,item=1:nrow(z),a=apar[!test],difmgc=z[,1],difmgt=z[,2],difmgc.se=se[,1],difmct.se=se[,2])
+    ##
+    treat.var<-as.numeric(sqrt(coef(mod,simplify=TRUE)$D1$cov))
+    ##
+    data.frame(fn=fn,item=1:nrow(z),a=apar[!test],
+               difmgc=z[,1],
+               difmgt=z[,2],
+               difmgc.se=se[,1],
+               difmct.se=se[,2],
+               treat.var=treat.var)
 }
 
-setwd('/home/bd/Dropbox/projects/measurement_rcts/02_itemresponse_data/')
+setwd('~/Dropbox/projects/measurement_rcts/02_itemresponse_data/')
 lf<-list.files()
 library(parallel)
 z<-mclapply(lf,ff,mc.cores=3)
@@ -145,7 +167,7 @@ df<-merge(df,z)
 #############################################################################
 ##3. cleaning up and getting some test-level stuff
 f<-function(fn) {
-    load(paste0('/home/bd/Dropbox/projects/measurement_rcts/02_itemresponse_data/',fn))
+    load(paste0('~/Dropbox/projects/measurement_rcts/02_itemresponse_data/',fn))
     for (i in 1:length(y)) assign(names(y)[i],y[[i]])
     th<-rowSums(resp,na.rm=TRUE)
     th<-(th-mean(th))/sd(th)
@@ -156,14 +178,14 @@ f<-function(fn) {
     effect.sig<-tt$p.value
     c(fn=fn,es=est,mt=mean(treat),cil=cil,ciu=ciu,effect.sig=effect.sig)
 } 
-lf<-list.files(path='/home/bd/Dropbox/projects/measurement_rcts/02_itemresponse_data')
+lf<-list.files(path='~/Dropbox/projects/measurement_rcts/02_itemresponse_data')
 x<-lapply(lf,f)
 x<-do.call("rbind",x)
 x<-data.frame(x)
 for (i in 2:ncol(x)) x[,i]<-as.numeric(x[,i])
 df<-merge(df,x)
 
-save(df,file='/home/bd/Dropbox/projects/measurement_rcts/bdwd/df.Rdata')
+save(df,file='~/Dropbox/projects/measurement_rcts/bdwd/df.Rdata')
 
 
 

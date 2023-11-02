@@ -1,5 +1,13 @@
-load("/home/bd/Dropbox/projects/measurement_rcts/bdwd/df.Rdata")
+load("~/Dropbox/projects/measurement_rcts/bdwd/df.Rdata")
+
+####################################
+##descriptives of delta
 df$del<-df$difmgt-df$difmgc
+range(df$del)
+quantile(df$del,c(.25,.75))
+library(e1071)
+skewness(df$del)
+summary(df$del)
 
 summary(df$lpm) #lpm dif estimates
 
@@ -12,20 +20,34 @@ plot(-log10(df$pv),-log10(p2))
 df$pvmg<-p2
 
 ####################################
+##descipritives of p-values
 mean(df$pvmg<.05)
 sum(df$pvmg<.05)
 dim(df)
 
 by(df$pvmg,df$group,function(x) mean(x<.05))
 
-##p value
-pdf("/home/bd/Dropbox/Apps/Overleaf/DIF Education RCTs/pvalues.pdf",width=7.5,height=3.3)
+
+
+L<-split(df,df$fn)
+nn<-sapply(L,nrow)
+df<-merge(df,data.frame(fn=names(nn),nitem=nn))
+alpha<-.05/df$nitem
+nrow(df)
+sum(df$pvmg<.05)
+sum(df$pvmg<alpha)
+
+test<-df$pvmg<alpha
+table(by(test,df$fn,sum))
+
+####################################
+##figure
+pdf("~/Dropbox/Apps/Overleaf/DIF Education RCTs/pvalues.pdf",width=7.5,height=3.3)
 par(mgp=c(2,1,0),mar=c(3,3,1,1),oma=rep(.75,4))
 layout(matrix(c(1,3,4,2,3,4),nrow=2,ncol=3,byrow=TRUE))
 ##
 hist(df$del,breaks=40,freq=FALSE,xlab=expression(beta[j]),
      col='gray',main='')
-summary(df$del)
 mtext(side=3,adj=0,line=0,'A')
 hist(df$pvmg,xlim=c(0,1),breaks=40,freq=FALSE,xlab="P-value",
      col='gray',main='')
@@ -60,19 +82,5 @@ pf2(df[df$del>=0,],yl,"In favor of Treatment")
 mtext(side=3,adj=0,line=0,'D')
 dev.off()
 
-
-L<-split(df,df$fn)
-nn<-sapply(L,nrow)
-df<-merge(df,data.frame(fn=names(nn),nitem=nn))
-alpha<-.05/df$nitem
-nrow(df)
-sum(df$pvmg<.05)
-sum(df$pvmg<alpha)
-
-test<-df$pvmg<alpha
-table(by(test,df$fn,sum))
-
-library(e1071)
-skewness(df$del)
 
 

@@ -1,5 +1,5 @@
 ##counts
-load("/home/bd/Dropbox/projects/measurement_rcts/bdwd/df.Rdata")
+load("~/Dropbox/projects/measurement_rcts/bdwd/df.Rdata")
 length(unique(df$fn))
 table(df$group)
 L<-split(df,df$fn)
@@ -13,14 +13,14 @@ f<-function(fn) {
     for (i in 1:length(y)) assign(names(y)[i],y[[i]])
     sum(!is.na(resp))
 }
-setwd('/home/bd/Dropbox/projects/measurement_rcts/02_itemresponse_data/')
+setwd('~/Dropbox/projects/measurement_rcts/02_itemresponse_data/')
 lf<-list.files()
 NN<-sapply(lf,f)
 sum(NN)
 #####################################################
 
 
-load("/home/bd/Dropbox/projects/measurement_rcts/bdwd/df.Rdata")
+load("~/Dropbox/projects/measurement_rcts/bdwd/df.Rdata")
 
 df$del<-df$difmgt-df$difmgc
 x1<-by(df$del,df$fn,mean)
@@ -35,7 +35,7 @@ f<-function(fn) {
     N<-nrow(resp)
     ni<-ncol(resp)
     #alpha
-        kr20<-function(resp) { #should square this with the definition we saw in class
+        kr20<-function(resp) { 
             k<-ncol(resp)
             p<-colMeans(resp,na.rm=TRUE)
             q<-1-p
@@ -45,20 +45,20 @@ f<-function(fn) {
     alpha<-kr20(resp)
     c(fn=fn,N=N,ni=ni,alpha=alpha)
 }
-setwd('/home/bd/Dropbox/projects/measurement_rcts/02_itemresponse_data/')
+setwd('~/Dropbox/projects/measurement_rcts/02_itemresponse_data/')
 lf<-list.files()
 df<-lapply(lf,f)
 x<-data.frame(do.call("rbind",df))
 for (i in 2:ncol(x)) x[,i]<-as.numeric(x[,i])
 
-load("/home/bd/Dropbox/projects/measurement_rcts/bdwd/df.Rdata")
+load("~/Dropbox/projects/measurement_rcts/bdwd/df.Rdata")
 df<-df[,c("fn","es","difficulty","disc")]
-df<-df[!duplicated(df$fn),]
-x<-merge(x,df)
+tmp<-df[!duplicated(df$fn),]
+x<-merge(x,tmp)
 
 
 
-pdf("/home/bd/Dropbox/Apps/Overleaf/DIF Education RCTs/psychometrics.pdf",width=8,height=3)
+pdf("~/Dropbox/Apps/Overleaf/DIF Education RCTs/psychometrics.pdf",width=8,height=3)
 par(mfrow=c(1,4),mgp=c(2,1,0),mar=c(3,3,1,1),oma=rep(.5,4))
 hist(x$N,xlab="N respondents",col='red',main='')
 mtext(side=3,adj=0,line=0,'A')

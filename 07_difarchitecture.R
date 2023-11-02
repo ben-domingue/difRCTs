@@ -1,5 +1,5 @@
 set.seed(101010320)
-load("/home/bd/Dropbox/projects/measurement_rcts/bdwd/df.Rdata")
+load("~/Dropbox/projects/measurement_rcts/bdwd/df.Rdata")
 df$del<-df$difmgt-df$difmgc
 
 f<-function(df) { #just the ratios
@@ -38,8 +38,7 @@ f<-function(x,niter=100) {
             ii<-apply(oo,2,function(x) which.min(abs(x)))    
             new.offsets<-dx[ii]
             gr<-rbinom(N,1,unique(x$mt))
-            th<-rnorm(N)
-            #th<-th+ifelse(gr==1,es[1],0) #under the current paradigm the es is baked into the difficulties
+            th<-rnorm(N,mean=0,sd=ifelse(gr==0,1,unique(x$treat.var)))
             df<-data.frame(treat=gr,th=th)
             resp<-list()
             #b<-rnorm(ni)
@@ -80,7 +79,7 @@ yy[,1]<-NULL
 
 z<-yy
 z<-z[order(z$es),]
-pdf("/home/bd/Dropbox/Apps/Overleaf/DIF Education RCTs/ratios.pdf",width=7,height=3.3)
+pdf("~/Dropbox/Apps/Overleaf/DIF Education RCTs/ratios.pdf",width=7,height=3.3)
 layout(matrix(c(1,2,3,3,3,3),nrow=2,ncol=,byrow=FALSE))
 par(mgp=c(2,1,0),mar=c(3,3,1,1),oma=rep(.5,4))
 #
@@ -108,11 +107,15 @@ dev.off()
 
 
 summary(d1/d0)
-
-#mean(abs(z[,1]-z[,6]))
+   ## Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   ## 1.00    1.11    1.18    1.21    1.23    1.86 
 
 ss1<-0<z[,2] | 0>z[,3]
 ss2<-0<z[,4] | 0>z[,5]
 table(ss1,ss2)
+
+##       ss2
+## ss1    FALSE TRUE
+##   TRUE     8   21
 
      

@@ -1,6 +1,6 @@
 #number of tests (subject-grade combinations), the total number of items and range of items-per-test, and the total sample size and range of sample-size-per-test (after your exclusion criteria)
 
-load("/home/bd/Dropbox/projects/measurement_rcts/bdwd/df.Rdata")
+load("~/Dropbox/projects/measurement_rcts/bdwd/df.Rdata")
 
 L<-split(df,df$fn)
 f<-function(x) {
@@ -17,3 +17,7 @@ tab<-data.frame(tab)
 
 library(xtable)
 print(xtable(tab),include.rownames=FALSE)
+
+mean(as.numeric(tab[,5]))
+sum(as.numeric(tab[,4]))
+sum(as.numeric(tab[,5]))
