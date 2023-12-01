@@ -35,6 +35,8 @@ tab<-rbind(tab1,tab2)
 library(xtable)
 xtable(tab)
 
+
+
 ## pdf("/home/bd/Dropbox/Apps/Overleaf/DIF Education RCTs/difitems.pdf",width=7,height=3.3)
 ## par(mfrow=c(1,2),mgp=c(2,1,0),mar=c(3,3,1,1),oma=rep(.75,4))
 ## plot(df$difficulty,df$lpm,pch=19,col='gray',cex=.5,xlab="Difficulty",ylab="LPM DIF estimate")

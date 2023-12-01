@@ -26,6 +26,21 @@ df$del<-df$difmgt-df$difmgc
 x1<-by(df$del,df$fn,mean)
 x2<-by(df$es,df$fn,mean)
 cor(x1,x2)
+n<-by(df$item,df$fn,length)
+z<-data.frame(x1,x2)
+wt<-as.numeric(n)
+weighted_corr <- cov.wt(z, wt = wt, cor = TRUE)
+weighted_corr
+
+plot(x2,x1,xlab='SS',ylab='delta')
+legend("topleft",bty='n',legend=round(cor(x1,x2),4))
+cbind(x1,x2)->z
+#z<-z[z[,1]> -1.5,]
+#cor(z)
+#53_parental_math__1.Rdata
+#GIRLSEDU_literacy__1.Rdata
+
+
 
 
 f<-function(fn) {
@@ -52,8 +67,8 @@ x<-data.frame(do.call("rbind",df))
 for (i in 2:ncol(x)) x[,i]<-as.numeric(x[,i])
 
 load("~/Dropbox/projects/measurement_rcts/bdwd/df.Rdata")
-df<-df[,c("fn","es","difficulty","disc")]
-tmp<-df[!duplicated(df$fn),]
+tmp<-df[,c("fn","es")]
+tmp<-tmp[!duplicated(tmp$fn),]
 x<-merge(x,tmp)
 
 
